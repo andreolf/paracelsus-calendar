@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Your Schedule · Paracelsus Recovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='5' fill='%23181918'/%3E%3Cg stroke='%23181918' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M16 2v6M16 24v6M2 16h6M24 16h6M6.1 6.1l4.2 4.2M21.7 21.7l4.2 4.2M6.1 25.9l4.2-4.2M21.7 10.3l4.2-4.2'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root{
+  --pale01:#FAF6EE;--pale02:#F3EDDA;--pale03:#E8D7B9;
+  --yellow01:#FFE9C0;--yellow03:#FFD48B;
+  --green01:#C9CEA4;--green02:#576A28;
+  --ink:#181918;--ink-60:rgba(24,25,24,.62);--ink-35:rgba(24,25,24,.35);--ink-12:rgba(24,25,24,.12);
+  --display:"Reckless Neue","Source Serif 4",Georgia,serif;
+  --body:"TWK Lausanne","Inter",system-ui,-apple-system,sans-serif;
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--pale01);color:var(--ink);font-family:var(--body);font-weight:300;line-height:1.5;min-height:100dvh}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+
+header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0 8px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:22px;height:22px}
+.brand span{font-family:var(--body);font-weight:400;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-60)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--green02);display:inline-block;box-shadow:0 0 0 0 rgba(87,106,40,.5);animation:pulse 2.4s infinite}
+.live.stale i{background:#c2772b;animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(87,106,40,.45)}70%{box-shadow:0 0 0 7px rgba(87,106,40,0)}100%{box-shadow:0 0 0 0 rgba(87,106,40,0)}}
+
+h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,6.5vw,42px);line-height:1.08;letter-spacing:-.01em;margin:18px 0 4px}
+.sub{color:var(--ink-60);font-size:15px;margin:0 0 22px}
+
+/* day strip */
+.strip{position:sticky;top:0;z-index:5;background:linear-gradient(var(--pale01) 85%,rgba(250,246,238,0));padding:6px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.days{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 auto;min-width:52px;padding:9px 6px 8px;border-radius:14px;text-align:center;border:1px solid transparent;transition:background .15s}
+.day small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60)}
+.day b{display:block;font-family:var(--display);font-weight:300;font-size:22px;line-height:1.1;margin-top:2px}
+.day .dot{width:4px;height:4px;border-radius:50%;background:var(--ink-35);margin:5px auto 0;opacity:0}
+.day.has .dot{opacity:1}
+.day.today{border-color:var(--ink-12)}
+.day.sel{background:var(--ink);color:var(--pale01)}
+.day.sel small{color:rgba(250,246,238,.7)}
+.day.sel .dot{background:var(--yellow03)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin:8px 0 0;font-size:13px;color:var(--ink-60)}
+.nav button{padding:6px 10px;border-radius:999px;border:1px solid var(--ink-12);font-size:13px;color:var(--ink)}
+.nav button:hover{background:var(--pale02)}
+
+/* events */
+.list{margin-top:14px}
+.dayhead{font-family:var(--display);font-weight:300;font-size:24px;margin:22px 0 10px;display:flex;align-items:baseline;gap:10px}
+.dayhead small{font-family:var(--body);font-size:13px;color:var(--ink-60)}
+.ev{background:#fff;border:1px solid var(--ink-12);border-radius:var(--radius);margin:0 0 10px;overflow:hidden;transition:border-color .15s}
+.ev.now{border-color:var(--green02);box-shadow:0 0 0 3px rgba(87,106,40,.10)}
+.ev.past{opacity:.55}
+.ev .row{display:grid;grid-template-columns:74px 1fr auto;gap:12px;align-items:start;padding:14px 14px 14px 16px;width:100%;text-align:left}
+.ev .time{font-size:13px;line-height:1.35;color:var(--ink-60);padding-top:2px;white-space:nowrap}
+.ev .time b{display:block;color:var(--ink);font-weight:500;font-size:15px}
+.ev .time.allday b{font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.ev .title{font-size:17px;font-weight:400;line-height:1.3}
+.ev .meta{font-size:13px;color:var(--ink-60);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.ev .meta span{display:inline-flex;align-items:center;gap:4px}
+.ev .chev{width:30px;height:30px;border-radius:50%;background:var(--pale02);display:flex;align-items:center;justify-content:center;transition:transform .2s;flex:0 0 auto}
+.ev .chev svg{width:14px;height:14px}
+.ev.open .chev{transform:rotate(180deg);background:var(--yellow01)}
+.ev .chev.hidden{visibility:hidden}
+.ev .notes{display:none;padding:0 16px 16px 102px;font-size:15px;color:var(--ink);line-height:1.55}
+.ev.open .notes{display:block}
+.ev .notes .label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-60);margin-bottom:6px}
+.ev .notes p{margin:0 0 .6em}.ev .notes p:last-child{margin:0}
+.ev .notes ul,.ev .notes ol{margin:.3em 0 .6em;padding-left:1.2em}
+.ev .notes a{color:var(--green02)}
+.ev .notes .box{background:var(--pale02);border-radius:12px;padding:12px 14px}
+.empty{padding:34px 20px;text-align:center;color:var(--ink-60);background:var(--pale02);border-radius:var(--radius);font-size:15px}
+.empty b{display:block;font-family:var(--display);font-weight:300;font-size:22px;color:var(--ink);margin-bottom:4px}
+
+/* states */
+.state{padding:40px 24px;text-align:center}
+.state h2{font-family:var(--display);font-weight:300;font-size:28px;margin:0 0 8px}
+.state p{color:var(--ink-60);margin:0 auto;max-width:34ch}
+.skel .ev{height:68px;background:linear-gradient(90deg,#fff,var(--pale02),#fff);background-size:200% 100%;animation:sh 1.3s infinite;border-color:transparent}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--ink-12);font-size:12px;color:var(--ink-60);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer a{text-decoration:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--ink);color:var(--pale01);font-size:13px;font-weight:400;text-decoration:none}
+
+@media (max-width:420px){
+  .ev .row{grid-template-columns:62px 1fr auto;gap:10px;padding:13px 12px 13px 14px}
+  .ev .notes{padding-left:14px}
+  .ev .time b{font-size:14px}
+}
+@media print{
+  .strip,.nav,.chev,footer,.live{display:none!important}
+  .ev{break-inside:avoid;box-shadow:none}
+  .ev .notes{display:block!important}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="https://paracelsus-recovery.com" rel="noopener">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 2v6M16 24v6M2 16h6M24 16h6M6.1 6.1l4.2 4.2M21.7 21.7l4.2 4.2M6.1 25.9l4.2-4.2M21.7 10.3l4.2-4.2M9.3 3.6l2.3 5.5M20.4 22.9l2.3 5.5M3.6 22.7l5.5-2.3M22.9 11.6l5.5-2.3"/></g></svg>
+      <span>Paracelsus Recovery</span>
+    </a>
+    <div class="live" id="live" hidden><i></i><span id="liveTxt">Live</span></div>
+  </header>
+
+  <main id="app">
+    <div class="state"><h2>Loading your schedule…</h2></div>
+  </main>
+
+  <footer>
+    <span>Paracelsus Recovery · Utoquai 43 · 8008 Zurich</span>
+    <a href="tel:+41445056898">+41 44 505 68 98</a>
+  </footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  'use strict';
+  const CFG = window.PARA_CAL || {};
+  const TZ = CFG.timeZone || 'Europe/Zurich';
+  const DAYS_BACK = CFG.daysBack ?? 7, DAYS_FWD = CFG.daysForward ?? 21;
+  const REFRESH_MS = (CFG.refreshSeconds || 60) * 1000;
+
+  const app = document.getElementById('app');
+  const live = document.getElementById('live'), liveTxt = document.getElementById('liveTxt');
+
+  // ---------- helpers ----------
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt = (d, o) => new Intl.DateTimeFormat('en-GB', Object.assign({timeZone: TZ}, o)).format(d);
+  const ymd = d => fmt(d, {year:'numeric', month:'2-digit', day:'2-digit'}).split('/').reverse().join('-'); // YYYY-MM-DD in TZ
+  const addDays = (d, n) => new Date(d.getTime() + n * 864e5);
+  const hhmm = d => fmt(d, {hour:'2-digit', minute:'2-digit', hour12:false});
+  const openEl = new Set(); // remember expanded events across refreshes
+
+  // Sanitize Google Calendar description HTML to a safe subset.
+  const ALLOW = {B:1,STRONG:1,I:1,EM:1,U:1,BR:1,P:1,UL:1,OL:1,LI:1,A:1,DIV:1,SPAN:1};
+  function cleanHtml(html){
+    if (!html) return '';
+    const looksHtml = /<[a-z][\s\S]*>/i.test(html);
+    if (!looksHtml) return esc(html).replace(/\n/g, '<br>');
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const walk = n => {
+      [...n.childNodes].forEach(c => {
+        if (c.nodeType === 3) return;
+        if (c.nodeType !== 1 || !ALLOW[c.tagName]) { c.replaceWith(...(c.childNodes || [])); return walk(n); }
+        [...c.attributes].forEach(a => { if (!(c.tagName === 'A' && a.name === 'href' && /^https?:/i.test(a.value))) c.removeAttribute(a.name); });
+        if (c.tagName === 'A') { c.setAttribute('target','_blank'); c.setAttribute('rel','noopener'); }
+        walk(c);
+      });
+    };
+    walk(doc.body);
+    return doc.body.innerHTML;
+  }
+
+  // ---------- params ----------
+  const qs = new URLSearchParams(location.search);
+  const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  let calId = qs.get('c') || hash.get('c') || '';
+  const demo = qs.has('demo');
+  if (calId && !calId.includes('@') && !calId.includes('calendar.google.com')) { // allow base64url-encoded ids
+    try { const dec = atob(calId.replace(/-/g,'+').replace(/_/g,'/')); if (dec.includes('@')) calId = dec; } catch(e){}
+  }
+  const clientName = qs.get('n') || hash.get('n') || '';
+
+  // ---------- state ----------
+  let events = [], selected = ymd(new Date()), lastOk = null, timer = null;
+
+  // ---------- data ----------
+  async function load(){
+    if (demo) { events = demoEvents(); lastOk = new Date(); return render(); }
+    if (!calId) return renderState('No schedule linked', 'This link is missing a calendar. Please use the link you received from the clinical team.');
+    if (!CFG.apiKey) return renderState('Not configured', 'The API key has not been set in config.js yet.');
+    const now = new Date();
+    const timeMin = addDays(now, -DAYS_BACK).toISOString(), timeMax = addDays(now, DAYS_FWD).toISOString();
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?` + new URLSearchParams({
+      key: CFG.apiKey, singleEvents:'true', orderBy:'startTime', timeMin, timeMax, timeZone: TZ, maxResults:'2500',
+      fields:'summary,items(id,status,summary,description,location,start,end,updated)'
+    });
+    try {
+      const r = await fetch(url, {cache:'no-store'});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      events = (j.items || []).filter(e => e.status !== 'cancelled').map(norm);
+      if (!clientName && j.summary) document.title = j.summary + ' · Paracelsus Recovery';
+      lastOk = new Date();
+      live.hidden = false; live.classList.remove('stale'); liveTxt.textContent = 'Live · ' + hhmm(lastOk);
+      render();
+    } catch (err) {
+      if (!events.length) return renderState('Schedule unavailable', 'The calendar could not be reached' + (err.message.includes('404') ? ' — check that it is shared publicly.' : '. Please try again shortly.'));
+      live.classList.add('stale'); liveTxt.textContent = 'Last update ' + hhmm(lastOk);
+    }
+  }
+  function norm(e){
+    const allDay = !!e.start.date;
+    const s = new Date(e.start.dateTime || (e.start.date + 'T00:00:00'));
+    const en = new Date(e.end.dateTime || (e.end.date + 'T00:00:00'));
+    return { id:e.id, title:e.summary || '(No title)', notes:e.description || '', loc:e.location || '', allDay, s, e:en,
+             days: allDay ? daysBetween(e.start.date, e.end.date) : [ymd(s)] };
+  }
+  function daysBetween(a, b){ // all-day: end is exclusive
+    const out = []; let d = new Date(a + 'T12:00:00Z'); const end = new Date(b + 'T12:00:00Z');
+    while (d < end && out.length < 60) { out.push(d.toISOString().slice(0,10)); d = addDays(d, 1); }
+    return out.length ? out : [a];
+  }
+
+  // ---------- render ----------
+  function renderState(h, p){
+    live.hidden = true;
+    app.innerHTML = `<div class="state"><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`;
+  }
+  function render(){
+    const now = new Date(), today = ymd(now);
+    const byDay = {};
+    events.forEach(ev => ev.days.forEach(d => (byDay[d] = byDay[d] || []).push(ev)));
+    const first = addDays(now, -DAYS_BACK), days = [];
+    for (let i = 0; i <= DAYS_BACK + DAYS_FWD; i++) days.push(ymd(addDays(first, i)));
+    if (!days.includes(selected)) selected = today;
+
+    const title = clientName ? `${esc(clientName)}’s schedule` : 'Your schedule';
+    const selDate = new Date(selected + 'T12:00:00');
+    const list = byDay[selected] || [];
+    list.sort((a,b) => (a.allDay === b.allDay ? a.s - b.s : a.allDay ? -1 : 1));
+
+    app.innerHTML = `
+      <h1>${title}</h1>
+      <p class="sub">All times in Zurich time (${TZ.replace('_',' ')}). Tap an appointment to see notes.</p>
+      <div class="strip">
+        <div class="days" id="days">${days.map(d => {
+          const dt = new Date(d + 'T12:00:00');
+          return `<button class="day${d===selected?' sel':''}${d===today?' today':''}${byDay[d]?' has':''}" data-d="${d}" aria-pressed="${d===selected}">
+            <small>${fmt(dt,{weekday:'short'})}</small><b>${fmt(dt,{day:'numeric'})}</b><i class="dot"></i></button>`;
+        }).join('')}</div>
+        <div class="nav"><button id="prev">‹ Previous day</button><button id="todayBtn">Today</button><button id="next">Next day ›</button></div>
+      </div>
+      <section class="list">
+        <div class="dayhead">${selected===today ? 'Today' : fmt(selDate,{weekday:'long'})}<small>${fmt(selDate,{day:'numeric',month:'long',year:'numeric'})}</small></div>
+        ${list.length ? list.map(ev => evHtml(ev, now)).join('') : `<div class="empty"><b>Nothing scheduled</b>Enjoy a free day — your care team will add appointments here.</div>`}
+      </section>`;
+
+    const strip = document.getElementById('days'), selBtn = strip.querySelector('.day.sel');
+    if (selBtn) strip.scrollLeft = selBtn.offsetLeft - strip.clientWidth/2 + selBtn.offsetWidth/2;
+    strip.addEventListener('click', e => { const b = e.target.closest('.day'); if (b) { selected = b.dataset.d; render(); } });
+    document.getElementById('prev').onclick = () => { selected = ymd(addDays(new Date(selected+'T12:00:00'), -1)); render(); };
+    document.getElementById('next').onclick = () => { selected = ymd(addDays(new Date(selected+'T12:00:00'), 1)); render(); };
+    document.getElementById('todayBtn').onclick = () => { selected = today; render(); };
+    app.querySelectorAll('.ev').forEach(el => {
+      el.querySelector('.row').addEventListener('click', () => {
+        if (!el.dataset.notes) return;
+        el.classList.toggle('open'); el.classList.contains('open') ? openEl.add(el.dataset.id) : openEl.delete(el.dataset.id);
+        el.querySelector('.row').setAttribute('aria-expanded', el.classList.contains('open'));
+      });
+    });
+  }
+  function evHtml(ev, now){
+    const hasNotes = !!ev.notes.trim();
+    const isNow = !ev.allDay && ev.s <= now && now < ev.e;
+    const isPast = !ev.allDay && ev.e <= now && ymd(ev.e) === ymd(now);
+    const open = openEl.has(ev.id);
+    const time = ev.allDay ? `<div class="time allday"><b>All day</b></div>`
+               : `<div class="time"><b>${hhmm(ev.s)}</b>${hhmm(ev.e)}</div>`;
+    const meta = [ev.loc ? `<span>📍 ${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span>${dur(ev.e - ev.s)}</span>` : '', isNow ? `<span style="color:var(--green02);font-weight:500">Now</span>` : ''].filter(Boolean).join('');
+    return `<article class="ev${isNow?' now':''}${isPast?' past':''}${open?' open':''}" data-id="${esc(ev.id)}" ${hasNotes?'data-notes="1"':''}>
+      <button class="row" aria-expanded="${open}" ${hasNotes?'':'style="cursor:default"'}>
+        ${time}
+        <div><div class="title">${esc(ev.title)}</div>${meta?`<div class="meta">${meta}</div>`:''}</div>
+        <span class="chev${hasNotes?'':' hidden'}" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l5 5 5-5"/></svg></span>
+      </button>
+      ${hasNotes ? `<div class="notes"><div class="box"><div class="label">Notes</div>${cleanHtml(ev.notes)}</div></div>` : ''}
+    </article>`;
+  }
+  function dur(ms){ const m = Math.round(ms/6e4), h = Math.floor(m/60), r = m%60; return h ? (r ? `${h} h ${r} min` : `${h} h`) : `${m} min`; }
+
+  // ---------- demo data ----------
+  function demoEvents(){
+    const t = ymd(new Date());
+    const off = (new Intl.DateTimeFormat('en-GB',{timeZone:TZ,timeZoneName:'longOffset'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName')||{}).value || 'GMT+01:00';
+    const z = off.replace('GMT','') || '+00:00';
+    const mk = (d,h1,m1,h2,m2,title,notes,loc) => ({ id:title+h1, title, notes, loc:loc||'', allDay:false,
+      s:new Date(`${d}T${String(h1).padStart(2,'0')}:${String(m1).padStart(2,'0')}:00${z}`), e:new Date(`${d}T${String(h2).padStart(2,'0')}:${String(m2).padStart(2,'0')}:00${z}`), days:[d] });
+    const tm = ymd(addDays(new Date(), 1));
+    return [
+      {id:'ad', title:'Lab preparation — fasting from midnight', notes:'<b>No food after 00:00.</b> Water is fine. Blood draw at 07:30 in your residence.', loc:'', allDay:true, s:new Date(t+'T00:00:00'), e:new Date(t+'T00:00:00'), days:[t]},
+      mk(t,7,30,8,0,'Blood draw & vitals','Nurse will come to the residence. Please stay seated 10 min afterwards.','Residence'),
+      mk(t,8,30,9,15,'Breakfast','<p><b>Menu:</b> Bircher muesli with berries, green tea, poached eggs on rye.</p><p>Supplements: Omega-3, Vitamin D (with food).</p>','Dining room'),
+      mk(t,10,0,11,0,'Psychotherapy — Dr. Keller','', 'Therapy room 2'),
+      mk(t,11,30,12,30,'Personal training','Light session today: mobility + 20 min zone-2 cardio. Bring trainers.','Gym'),
+      mk(t,13,0,14,0,'Lunch','<b>Menu:</b> Grilled sea bass, quinoa salad, steamed greens. Dessert: baked apple.','Dining room'),
+      mk(t,15,0,16,0,'Nutritional consultation — Priscilla','Please bring your food diary from this week.','Consultation room'),
+      mk(t,17,0,18,0,'Yoga & breathwork','','Studio'),
+      mk(t,19,0,20,0,'Dinner','<b>Menu:</b> Vegetable curry with brown rice, cucumber raita.','Dining room'),
+      mk(tm,9,0,10,0,'Psychiatry review — Dr. Weber','','Consultation room'),
+      mk(tm,10,30,11,30,'EMDR session','','Therapy room 1'),
+      mk(tm,13,0,14,0,'Lunch','<b>Menu:</b> Lemon chicken, roasted vegetables, mixed leaves.','Dining room'),
+    ];
+  }
+
+  // ---------- boot ----------
+  load();
+  timer = setInterval(load, REFRESH_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+})();
+</script>
+</body>
+</html>
