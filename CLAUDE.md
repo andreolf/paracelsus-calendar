@@ -21,7 +21,7 @@ Pale01 `#FAF6EE` bg, Pale02 `#F3EDDA`, Yellow01 `#FFE9C0` (notes box / open chev
 
 ## Remaining steps
 1. ~~Create repo, push, enable Pages from `main` / root~~ — done 16 Oct 2026. Live at https://andreolf.github.io/paracelsus-calendar/
-2. Google Cloud: enable Calendar API, create API key restricted to HTTP referrers `https://cal.paracelsus-recovery.com/*` and `https://andreolf.github.io/*`, API restriction = Calendar API only → paste into `config.js`, commit.
+2. ~~Google Cloud API key~~ — done 16 Oct 2026 (key "paracelsus-calendar-web" in config.js, public by design; restrictions verified: other/empty referrers blocked). Was: enable Calendar API, create API key restricted to HTTP referrers `https://cal.paracelsus-recovery.com/*` and `https://andreolf.github.io/*`, API restriction = Calendar API only → paste into `config.js`, commit.
 3. Test with a real calendar: `https://andreolf.github.io/paracelsus-calendar/?c=<id>` before DNS.
 4. David: `cal CNAME andreolf.github.io`; then re-add the `CNAME` file / custom domain, and tick Enforce HTTPS in Pages settings once the cert is issued.
 5. Send Jan/David the demo link (`?demo`) and the per-client link format.
