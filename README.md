@@ -28,15 +28,16 @@ The client's calendar must be shared **publicly** ("Make available to public →
 ## Setup (one-off)
 
 1. **API key** — Google Cloud Console → APIs & Services → enable *Google Calendar API* → Credentials → *Create API key*. Restrict it: Application = HTTP referrers (`https://cal.paracelsus-recovery.com/*`, `https://andreolf.github.io/*`), API = Google Calendar API only. Paste into `config.js`.
-2. **GitHub Pages** — Settings → Pages → Source: *Deploy from branch* `main` / root. The `CNAME` file sets the custom domain.
+2. **GitHub Pages** — Settings → Pages → Source: *Deploy from branch* `main` / root. Add the `CNAME` file (`cal.paracelsus-recovery.com`) only after DNS exists, otherwise github.io redirects to a dead domain.
 3. **DNS** (David) — `cal.paracelsus-recovery.com CNAME andreolf.github.io`. Then tick *Enforce HTTPS* in the Pages settings once the certificate is issued.
 
 ## Adding a client
 
-Share the client's Google Calendar publicly, copy its Calendar ID, build the link. No deploy needed.
+Share the client's Google Calendar publicly, then open **`/link.html`** (the client link builder): paste the Calendar ID (or the calendar's public/embed URL), add the client's first name, copy the link. It encodes the ID, and once the API key is set it also checks the calendar is public. No deploy needed.
 
 ## Files
 
 - `index.html` — the whole app (no build step, no dependencies besides Google Fonts).
+- `link.html` — client link builder for the clinical team (nothing stored).
 - `config.js` — API key + display settings.
-- `CNAME`, `.nojekyll` — GitHub Pages.
+- `.nojekyll` — GitHub Pages. (`CNAME` is added back once the `cal.` DNS record exists.)

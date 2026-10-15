@@ -11,8 +11,9 @@ Static replacement for the WordPress client calendar pages (`paracelsus-recovery
 ## How it works
 - `index.html` — whole app, no build step. Reads `?c=<calendarId>&n=<first name>` (or `#c=`), calls Google Calendar API v3 directly with the API key from `config.js`, renders a day strip (7 back / 21 ahead) and the selected day's events with expandable sanitized notes. Auto-refresh 60 s + on focus. `?demo` = sample data.
 - `config.js` — `apiKey` (empty until created), timezone Europe/Zurich, ranges.
+- `link.html` — client link builder for Maria (clinical team): paste Calendar ID / public URL / embed code + first name → base64url `?c=…&n=…` link to copy; rejects secret iCal addresses; checks the calendar is public once `apiKey` is set.
 - `CNAME` — removed for now (16 Oct 2026): with it set before DNS exists, github.io redirects to the unresolvable custom domain. Re-add (`echo cal.paracelsus-recovery.com > CNAME`, or set Custom domain in Settings → Pages) right after David creates the DNS record. `.nojekyll` present.
-- Requires each client calendar to be shared **publicly** ("see all event details"). Francesco believes they already are — verify with one real calendar ID before rollout. If they are not public, fallback plan: Google Apps Script web app (runs as clinic account, returns JSON) or a GitHub Action polling private ICS URLs into `data/*.json`; `load()` in index.html is the only place to change.
+- Requires each client calendar to be shared **publicly** ("see all event details"). Confirmed by Maria Pena (16 Oct 2026): she creates a calendar per client, makes it public, and copies its ID into WordPress — same step now goes into `link.html`. Still verify with one real calendar ID before rollout. If they are not public, fallback plan: Google Apps Script web app (runs as clinic account, returns JSON) or a GitHub Action polling private ICS URLs into `data/*.json`; `load()` in index.html is the only place to change.
 - No client data in the repo on purpose (repo may be public; Pages from a private repo needs GitHub Pro).
 
 ## Brand
