@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .live.stale i{background:#c2772b;animation:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(87,106,40,.45)}70%{box-shadow:0 0 0 7px rgba(87,106,40,0)}100%{box-shadow:0 0 0 0 rgba(87,106,40,0)}}
 
-.wrap{max-width:760px;margin:0 auto;padding:0 24px calc(32px + env(safe-area-inset-bottom))}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px calc(32px + env(safe-area-inset-bottom))}
 
 /* intro */
 .intro{text-align:center;padding:56px 0 28px}
@@ -47,7 +47,7 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);lin
 
 /* day strip */
 .strip{position:sticky;top:var(--bar-h);z-index:5;background:var(--pale01);padding:14px 24px 16px;margin:0 -24px;border-bottom:1px solid var(--line)}
-.days{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.days{display:flex;justify-content:safe center;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 auto;min-width:54px;padding:10px 6px 9px;border-radius:999px;text-align:center;border:1px solid transparent;transition:background .15s,border-color .15s}
 .day:hover{border-color:var(--line)}
@@ -56,6 +56,7 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);lin
 .day .dot{width:4px;height:4px;border-radius:50%;background:var(--muted);margin:5px auto 0;opacity:0}
 .day.has .dot{opacity:1}
 .day.today{border-color:var(--line)}
+.day.vis{background:var(--pale02)}
 .day.sel{background:var(--ink);border-color:var(--ink);color:var(--pale01)}
 .day.sel small{color:rgba(250,246,238,.7)}
 .day.sel .dot{background:var(--yellow03)}
@@ -64,34 +65,39 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);lin
 .btn:hover{background:var(--ink);color:var(--pale01)}
 .btn svg{width:14px;height:10px}
 
-/* events */
-.dayhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:40px 0 18px}
-.dayhead h2{font-family:var(--display);font-weight:300;font-size:40px;line-height:1.1;letter-spacing:-.05em;margin:0}
-.list{border-top:1px solid var(--line)}
+/* every-day board: one column per day, swipe sideways (like the old WordPress page) */
+.board{position:relative;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -24px;padding:0 24px;scroll-padding:0 24px}
+.board::-webkit-scrollbar{display:none}
+.col{flex:0 0 380px;scroll-snap-align:start;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
+.col:last-child{border-right:1px solid var(--line)}
+.col-head{padding:26px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.col-head h2{font-family:var(--display);font-weight:300;font-size:32px;line-height:1.1;letter-spacing:-.05em;margin:0}
+.col.today .col-head{background:var(--pale02)}
+.col.today .col-head .eyebrow{color:var(--ink)}
 .ev{border-bottom:1px solid var(--line);transition:background .15s}
 .ev.now{background:var(--pale02)}
 .ev.past{opacity:.5}
-.ev .row{display:grid;grid-template-columns:88px 1fr auto;gap:16px;align-items:start;padding:22px 12px;width:100%;text-align:left}
+.ev .row{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:start;padding:18px 20px;width:100%;text-align:left}
 .ev[data-notes] .row:hover .chev{border-color:var(--ink)}
 .ev .time{font-size:13px;line-height:1.4;color:var(--muted);padding-top:5px;white-space:nowrap}
-.ev .time b{display:block;color:var(--ink);font-weight:450;font-size:16px}
+.ev .time b{display:block;color:var(--ink);font-weight:450;font-size:15px}
 .ev .time.allday b{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
-.ev .title{font-family:var(--display);font-size:24px;font-weight:300;line-height:1.2;letter-spacing:-.03em}
+.ev .title{font-family:var(--display);font-size:21px;font-weight:300;line-height:1.2;letter-spacing:-.03em}
 .ev .meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px}
 .ev .meta .nowtag{color:var(--green02)}
-.ev .chev{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s;flex:0 0 auto}
+.ev .chev{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s;flex:0 0 auto}
 .ev .chev svg{width:14px;height:14px}
 .ev.open .chev{transform:rotate(180deg);background:var(--yellow01);border-color:var(--yellow01)}
 .ev .chev.hidden{visibility:hidden}
-.ev .notes{display:none;padding:0 64px 24px 116px;font-size:15px;color:var(--ink);line-height:1.55}
+.ev .notes{display:none;padding:0 20px 20px;font-size:15px;color:var(--ink);line-height:1.55}
 .ev.open .notes{display:block}
 .ev .notes .eyebrow{margin-bottom:8px}
 .ev .notes p{margin:0 0 .6em}.ev .notes p:last-child{margin:0}
 .ev .notes ul,.ev .notes ol{margin:.3em 0 .6em;padding-left:1.2em}
 .ev .notes a{color:var(--green02)}
 .ev .notes .box{background:var(--yellow01);padding:16px 18px}
-.empty{padding:48px 20px;text-align:center;color:var(--muted);font-size:15px;border-bottom:1px solid var(--line)}
-.empty b{display:block;font-family:var(--display);font-weight:300;font-size:28px;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
+.empty b{display:block;font-family:var(--display);font-weight:300;font-size:24px;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
 
 /* states */
 .state{padding:96px 24px;text-align:center}
@@ -110,15 +116,18 @@ footer a{text-decoration:none}
   .strip{padding-left:16px;padding-right:16px;margin:0 -16px}
   .intro{padding:36px 0 22px}
   .btn{padding:9px 14px;font-size:12px}
-  .dayhead{margin-top:28px}
-  .dayhead h2{font-size:32px}
-  .ev .row{grid-template-columns:58px 1fr auto;gap:12px;padding:18px 4px}
-  .ev .time b{font-size:15px}
+  .board{margin:0 -16px;padding:0 16px;scroll-padding:0 16px}
+  .col{flex-basis:calc(100vw - 56px)}
+  .col-head{padding:22px 16px 14px}
+  .col-head h2{font-size:28px}
+  .ev .row{grid-template-columns:54px 1fr auto;gap:10px;padding:16px}
   .ev .title{font-size:20px}
-  .ev .notes{padding:0 4px 18px}
+  .ev .notes{padding:0 16px 16px}
 }
 @media print{
   .bar,.strip,.chev,footer,.live{display:none!important}
+  .board{display:block;overflow:visible;margin:0;padding:0}
+  .col{border:0;break-inside:avoid-page}
   .ev{break-inside:avoid}
   .ev .notes{display:block!important}
   body{background:#fff}
@@ -248,37 +257,56 @@ footer a{text-decoration:none}
     const first = addDays(now, -DAYS_BACK), days = [];
     for (let i = 0; i <= DAYS_BACK + DAYS_FWD; i++) days.push(ymd(addDays(first, i)));
     if (!days.includes(selected)) selected = today;
+    const old = document.getElementById('board'), keepLeft = old ? old.scrollLeft : null; // keep position across auto-refresh
 
     const title = clientName ? `${esc(clientName)}’s schedule` : 'Your schedule';
-    const selDate = new Date(selected + 'T12:00:00');
-    const list = byDay[selected] || [];
-    list.sort((a,b) => (a.allDay === b.allDay ? a.s - b.s : a.allDay ? -1 : 1));
-
     app.innerHTML = `
       <section class="intro">
         <div class="eyebrow">Client schedule</div>
         <h1>${title}</h1>
-        <p class="sub">All times in Zurich time. Tap an appointment to see its notes.</p>
+        <p class="sub">All times in Zurich time. Swipe through the days and tap an appointment to see its notes.</p>
       </section>
       <div class="strip">
         <div class="days" id="days">${days.map(d => {
           const dt = new Date(d + 'T12:00:00');
-          return `<button class="day${d===selected?' sel':''}${d===today?' today':''}${byDay[d]?' has':''}" data-d="${d}" aria-pressed="${d===selected}">
+          return `<button class="day${d===today?' today':''}${byDay[d]?' has':''}" data-d="${d}">
             <small>${fmt(dt,{weekday:'short'})}</small><b>${fmt(dt,{day:'numeric'})}</b><i class="dot"></i></button>`;
         }).join('')}</div>
         <div class="nav"><button class="btn" id="prev">${ARROW_L}Previous</button><button class="btn" id="todayBtn">Today</button><button class="btn" id="next">Next${ARROW_R}</button></div>
       </div>
-      <div class="dayhead"><h2>${selected===today ? 'Today' : fmt(selDate,{weekday:'long'})}</h2><span class="eyebrow">${fmt(selDate,{day:'numeric',month:'long',year:'numeric'})}</span></div>
-      <section class="list">
-        ${list.length ? list.map(ev => evHtml(ev, now)).join('') : `<div class="empty"><b>Nothing scheduled</b>Enjoy a free day — your care team will add appointments here.</div>`}
-      </section>`;
+      <div class="board" id="board">${days.map(d => colHtml(d, byDay[d] || [], today, now)).join('')}</div>`;
 
-    const strip = document.getElementById('days'), selBtn = strip.querySelector('.day.sel');
-    if (selBtn) strip.scrollLeft = selBtn.offsetLeft - strip.clientWidth/2 + selBtn.offsetWidth/2;
-    strip.addEventListener('click', e => { const b = e.target.closest('.day'); if (b) { selected = b.dataset.d; render(); } });
-    document.getElementById('prev').onclick = () => { selected = ymd(addDays(new Date(selected+'T12:00:00'), -1)); render(); };
-    document.getElementById('next').onclick = () => { selected = ymd(addDays(new Date(selected+'T12:00:00'), 1)); render(); };
-    document.getElementById('todayBtn').onclick = () => { selected = today; render(); };
+    const strip = document.getElementById('days'), board = document.getElementById('board');
+    const cols = [...board.children];
+    let lock = false, settle = 0; // while we scroll programmatically, don't let the scroll handler change the selection
+    const go = (d, smooth) => { const c = board.querySelector(`.col[data-d="${d}"]`); if (!c) return;
+      const left = c.offsetLeft - parseFloat(getComputedStyle(board).paddingLeft);
+      selected = d; lock = true; mark();
+      board.scrollTo({left, behavior: smooth && Math.abs(left - board.scrollLeft) <= 4 * c.offsetWidth ? 'smooth' : 'auto'});
+      clearTimeout(settle); settle = setTimeout(() => { lock = false; mark(); }, 700); };
+    // Strip shows the visible days (light) and the selected/leftmost one (dark).
+    function mark(){
+      const l = board.scrollLeft, r = l + board.clientWidth;
+      const vis = new Set(cols.filter(c => c.offsetLeft < r - 40 && c.offsetLeft + c.offsetWidth > l + 40).map(c => c.dataset.d));
+      strip.querySelectorAll('.day').forEach(b => { const on = b.dataset.d === selected; b.classList.toggle('sel', on); b.setAttribute('aria-pressed', on); b.classList.toggle('vis', vis.has(b.dataset.d)); });
+      const sb = strip.querySelector('.day.sel');
+      if (sb) strip.scrollLeft = sb.offsetLeft - strip.offsetLeft - strip.clientWidth/2 + sb.offsetWidth/2;
+      return vis;
+    }
+    let raf = 0;
+    board.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
+      if (lock) { clearTimeout(settle); settle = setTimeout(() => { lock = false; mark(); }, 150); return; }
+      const vis = mark();
+      const firstVis = cols.find(c => vis.has(c.dataset.d)); // after a swipe the leftmost visible day is the selected one
+      if (firstVis && firstVis.dataset.d !== selected) { selected = firstVis.dataset.d; mark(); }
+    }); }, {passive: true});
+    if (keepLeft !== null) { board.scrollLeft = keepLeft; mark(); } else go(selected, false);
+
+    strip.addEventListener('click', e => { const b = e.target.closest('.day'); if (b) go(b.dataset.d, true); });
+    const step = n => go(days[Math.min(days.length - 1, Math.max(0, days.indexOf(selected) + n))], true);
+    document.getElementById('prev').onclick = () => step(-1);
+    document.getElementById('next').onclick = () => step(1);
+    document.getElementById('todayBtn').onclick = () => go(today, true);
     app.querySelectorAll('.ev').forEach(el => {
       el.querySelector('.row').addEventListener('click', () => {
         if (!el.dataset.notes) return;
@@ -287,15 +315,23 @@ footer a{text-decoration:none}
       });
     });
   }
-  function evHtml(ev, now){
+  function colHtml(d, list, today, now){
+    const dt = new Date(d + 'T12:00:00');
+    list = list.slice().sort((a,b) => (a.allDay === b.allDay ? a.s - b.s : a.allDay ? -1 : 1));
+    return `<section class="col${d===today?' today':''}" data-d="${d}" aria-label="${fmt(dt,{weekday:'long', day:'numeric', month:'long'})}">
+      <div class="col-head"><h2>${d===today ? 'Today' : fmt(dt,{weekday:'long'})}</h2><span class="eyebrow">${fmt(dt,{day:'numeric', month:'long'})}</span></div>
+      ${list.length ? list.map(ev => evHtml(ev, now, d)).join('') : `<div class="empty"><b>Nothing scheduled</b>A free day.</div>`}
+    </section>`;
+  }
+  function evHtml(ev, now, d){
     const hasNotes = !!ev.notes.trim();
     const isNow = !ev.allDay && ev.s <= now && now < ev.e;
     const isPast = !ev.allDay && ev.e <= now && ymd(ev.e) === ymd(now);
-    const open = openEl.has(ev.id);
+    const key = ev.id + '|' + d, open = openEl.has(key);
     const time = ev.allDay ? `<div class="time allday"><b>All day</b></div>`
                : `<div class="time"><b>${hhmm(ev.s)}</b>${hhmm(ev.e)}</div>`;
     const meta = [isNow ? `<span class="nowtag">Now</span>` : '', ev.loc ? `<span>${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span>${dur(ev.e - ev.s)}</span>` : ''].filter(Boolean).join('');
-    return `<article class="ev${isNow?' now':''}${isPast?' past':''}${open?' open':''}" data-id="${esc(ev.id)}" ${hasNotes?'data-notes="1"':''}>
+    return `<article class="ev${isNow?' now':''}${isPast?' past':''}${open?' open':''}" data-id="${esc(key)}" ${hasNotes?'data-notes="1"':''}>
       <button class="row" aria-expanded="${open}" ${hasNotes?'':'style="cursor:default"'}>
         ${time}
         <div><div class="title">${esc(ev.title)}</div>${meta?`<div class="meta eyebrow">${meta}</div>`:''}</div>
@@ -313,7 +349,7 @@ footer a{text-decoration:none}
     const z = off.replace('GMT','') || '+00:00';
     const mk = (d,h1,m1,h2,m2,title,notes,loc) => ({ id:title+h1, title, notes, loc:loc||'', allDay:false,
       s:new Date(`${d}T${String(h1).padStart(2,'0')}:${String(m1).padStart(2,'0')}:00${z}`), e:new Date(`${d}T${String(h2).padStart(2,'0')}:${String(m2).padStart(2,'0')}:00${z}`), days:[d] });
-    const tm = ymd(addDays(new Date(), 1));
+    const tm = ymd(addDays(new Date(), 1)), t2 = ymd(addDays(new Date(), 2)), t3 = ymd(addDays(new Date(), 3));
     return [
       {id:'ad', title:'Lab preparation — fasting from midnight', notes:'<b>No food after 00:00.</b> Water is fine. Blood draw at 07:30 in your residence.', loc:'', allDay:true, s:new Date(t+'T00:00:00'), e:new Date(t+'T00:00:00'), days:[t]},
       mk(t,7,30,8,0,'Blood draw & vitals','Nurse will come to the residence. Please stay seated 10 min afterwards.','Residence'),
@@ -327,6 +363,12 @@ footer a{text-decoration:none}
       mk(tm,9,0,10,0,'Psychiatry review — Dr. Weber','','Consultation room'),
       mk(tm,10,30,11,30,'EMDR session','','Therapy room 1'),
       mk(tm,13,0,14,0,'Lunch','<b>Menu:</b> Lemon chicken, roasted vegetables, mixed leaves.','Dining room'),
+      mk(tm,16,0,17,0,'Massage','','Spa'),
+      mk(t2,8,0,8,45,'Breakfast','<b>Menu:</b> Greek yoghurt, walnuts, honey; herbal tea.','Dining room'),
+      mk(t2,10,0,11,0,'Psychotherapy — Dr. Keller','','Therapy room 2'),
+      mk(t2,14,0,15,30,'Outdoor walk — lake promenade','Comfortable shoes and a light jacket.','Meet at reception'),
+      mk(t3,9,30,10,30,'Family session (video)','Link will be sent by the therapist 10 min before.','Therapy room 1'),
+      mk(t3,13,0,14,0,'Lunch','<b>Menu:</b> Risotto with porcini, rocket salad.','Dining room'),
     ];
   }
 
