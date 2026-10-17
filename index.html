@@ -22,15 +22,22 @@
   --bar-h:80px;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+:root{
+  --gut:24px;
+  --gl:max(var(--gut), env(safe-area-inset-left, 0px));
+  --gr:max(var(--gut), env(safe-area-inset-right, 0px));
+  --bar-total:calc(var(--bar-h) + env(safe-area-inset-top, 0px));
+}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+html.locked{overflow:hidden}
 body{margin:0;background:var(--pale01);color:var(--ink);font-family:var(--body);font-weight:300;font-size:16px;line-height:1.4;min-height:100dvh}
 a{color:inherit}
-button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;touch-action:manipulation}
 .eyebrow{font-family:var(--body);font-size:13px;font-weight:450;letter-spacing:.1em;line-height:1.2;text-transform:uppercase;color:var(--muted)}
 
 /* header bar — mirrors the main site's centered logo bar */
-.bar{position:sticky;top:0;z-index:20;height:var(--bar-h);background:rgba(250,246,238,.82);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border-bottom:1px solid var(--line)}
-.bar-in{max-width:1200px;height:100%;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.bar{position:sticky;top:0;z-index:20;height:var(--bar-total);padding-top:env(safe-area-inset-top, 0px);background:rgba(250,246,238,.82);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1440px;height:100%;margin:0 auto;padding:0 var(--gr) 0 var(--gl);display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
 .logo{grid-column:2;display:block;color:var(--ink);line-height:0}
 .logo svg{width:278px;height:36px;display:block}
 .live{grid-column:3;justify-self:end;display:flex;align-items:center;gap:8px;font-size:12px}
@@ -38,19 +45,18 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .live.stale i{background:#c2772b;animation:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(87,106,40,.45)}70%{box-shadow:0 0 0 7px rgba(87,106,40,0)}100%{box-shadow:0 0 0 0 rgba(87,106,40,0)}}
 
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px calc(32px + env(safe-area-inset-bottom))}
+.wrap{max-width:1440px;margin:0 auto;padding:0 var(--gr) calc(32px + env(safe-area-inset-bottom, 0px)) var(--gl)}
 
 /* intro */
 .intro{text-align:center;padding:56px 0 28px}
-h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);line-height:1.05;letter-spacing:-.05em;margin:14px 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(40px,8vw,72px);line-height:1.05;letter-spacing:-.05em;margin:14px 0 14px}
 .sub{color:var(--muted);font-size:15px;margin:0 auto;max-width:44ch}
 
-/* day strip */
-.strip{position:sticky;top:var(--bar-h);z-index:5;background:var(--pale01);padding:14px 24px 16px;margin:0 -24px;border-bottom:1px solid var(--line)}
+/* day strip (sticky) */
+.strip{position:sticky;top:var(--bar-total);z-index:5;background:var(--pale01);margin:0 calc(-1 * var(--gr)) 0 calc(-1 * var(--gl));padding:12px var(--gr) 12px var(--gl);border-bottom:1px solid var(--line)}
 .days{display:flex;justify-content:safe center;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 auto;min-width:54px;padding:10px 6px 9px;border-radius:999px;text-align:center;border:1px solid transparent;transition:background .15s,border-color .15s}
-.day:hover{border-color:var(--line)}
 .day small{display:block;font-size:11px;font-weight:450;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .day b{display:block;font-family:var(--display);font-weight:300;font-size:26px;line-height:1.1;letter-spacing:-.03em;margin-top:3px}
 .day .dot{width:4px;height:4px;border-radius:50%;background:var(--muted);margin:5px auto 0;opacity:0}
@@ -60,44 +66,65 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);lin
 .day.sel{background:var(--ink);border-color:var(--ink);color:var(--pale01)}
 .day.sel small{color:rgba(250,246,238,.7)}
 .day.sel .dot{background:var(--yellow03)}
-.nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;border:1px solid var(--ink);font-size:13px;font-weight:450;letter-spacing:.05em;text-transform:uppercase;line-height:1.2;color:var(--ink);text-decoration:none;transition:background .15s,color .15s}
-.btn:hover{background:var(--ink);color:var(--pale01)}
-.btn svg{width:14px;height:10px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:16px 0}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:10px 18px;border-radius:999px;border:1px solid var(--ink);font-size:13px;font-weight:450;letter-spacing:.05em;text-transform:uppercase;line-height:1.2;color:var(--ink);text-decoration:none;white-space:nowrap;transition:background .15s,color .15s}
+.btn svg{width:14px;height:10px;flex:0 0 auto}
+@media (hover:hover){
+  .day:hover{border-color:var(--line)}
+  .btn:hover{background:var(--ink);color:var(--pale01)}
+  .ev[data-notes] .row:hover .chev{border-color:var(--ink)}
+}
 
-/* every-day board: one column per day, swipe sideways (like the old WordPress page) */
-.board{position:relative;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -24px;padding:0 24px;scroll-padding:0 24px}
+/* board: one column per day, swipe sideways (like the old WordPress page).
+   Phones: 1 day + peek · 600–999px (iPad portrait): 3 days · ≥1000px (iPad landscape, desktop): Mon–Sun week */
+.board{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 calc(-1 * var(--gr)) 0 calc(-1 * var(--gl));padding:0 var(--gr) 0 var(--gl);scroll-padding:0 var(--gr) 0 var(--gl)}
 .board::-webkit-scrollbar{display:none}
-.col{flex:0 0 380px;scroll-snap-align:start;border-left:1px solid var(--line);border-bottom:1px solid var(--line)}
-.col:last-child{border-right:1px solid var(--line)}
-.col-head{padding:26px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.col-head h2{font-family:var(--display);font-weight:300;font-size:32px;line-height:1.1;letter-spacing:-.05em;margin:0}
+.col{flex:0 0 calc(100% - 28px);min-width:0;scroll-snap-align:start;border-right:1px solid var(--line);border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.col:first-child{box-shadow:inset 1px 0 var(--line)}
+.col-head{padding:18px 16px 14px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.col-head h2{font-family:var(--display);font-weight:300;font-size:28px;line-height:1.1;letter-spacing:-.05em;margin:0}
 .col.today .col-head{background:var(--pale02)}
 .col.today .col-head .eyebrow{color:var(--ink)}
 .ev{border-bottom:1px solid var(--line);transition:background .15s}
+.ev:last-child{border-bottom:0}
 .ev.now{background:var(--pale02)}
 .ev.past{opacity:.5}
-.ev .row{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:start;padding:18px 20px;width:100%;text-align:left}
-.ev[data-notes] .row:hover .chev{border-color:var(--ink)}
-.ev .time{font-size:13px;line-height:1.4;color:var(--muted);padding-top:5px;white-space:nowrap}
+.ev .row{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:start;padding:16px;width:100%;text-align:left}
+.ev:not([data-notes]) .row{cursor:default}
+.ev .time{font-size:13px;line-height:1.4;color:var(--muted);padding-top:4px;white-space:nowrap}
 .ev .time b{display:block;color:var(--ink);font-weight:450;font-size:15px}
-.ev .time.allday b{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
-.ev .title{font-family:var(--display);font-size:21px;font-weight:300;line-height:1.2;letter-spacing:-.03em}
-.ev .meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12px}
-.ev .meta .nowtag{color:var(--green02)}
+.ev .time .end{display:block}
+.ev .time.allday b{font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.ev .body{min-width:0}
+.ev .title{font-family:var(--display);font-size:20px;font-weight:300;line-height:1.2;letter-spacing:-.03em;overflow-wrap:anywhere}
+.ev .meta{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px}
+.nowtag{color:var(--green02)}
 .ev .chev{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s,border-color .2s;flex:0 0 auto}
 .ev .chev svg{width:14px;height:14px}
 .ev.open .chev{transform:rotate(180deg);background:var(--yellow01);border-color:var(--yellow01)}
 .ev .chev.hidden{visibility:hidden}
-.ev .notes{display:none;padding:0 20px 20px;font-size:15px;color:var(--ink);line-height:1.55}
+.ev .notes{display:none;padding:0 16px 16px}
 .ev.open .notes{display:block}
-.ev .notes .eyebrow{margin-bottom:8px}
-.ev .notes p{margin:0 0 .6em}.ev .notes p:last-child{margin:0}
-.ev .notes ul,.ev .notes ol{margin:.3em 0 .6em;padding-left:1.2em}
-.ev .notes a{color:var(--green02)}
-.ev .notes .box{background:var(--yellow01);padding:16px 18px}
-.empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
-.empty b{display:block;font-family:var(--display);font-weight:300;font-size:24px;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
+.rich{font-size:15px;color:var(--ink);line-height:1.55;overflow-wrap:anywhere}
+.rich .eyebrow{margin-bottom:8px}
+.rich p{margin:0 0 .6em}.rich p:last-child{margin:0}
+.rich ul,.rich ol{margin:.3em 0 .6em;padding-left:1.2em}
+.rich a{color:var(--green02)}
+.box{background:var(--yellow01);padding:16px 18px}
+.empty{padding:36px 16px;text-align:center;color:var(--muted);font-size:14px}
+.empty b{display:block;font-family:var(--display);font-weight:300;font-size:22px;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
+
+/* details sheet (multi-column layouts) */
+.sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:max(24px, env(safe-area-inset-top, 0px)) 24px max(24px, env(safe-area-inset-bottom, 0px))}
+.sheet[hidden]{display:none}
+.sheet-bg{position:absolute;inset:0;background:rgba(24,25,24,.32)}
+.sheet-panel{position:relative;width:min(560px,100%);max-height:100%;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--pale01);border:1px solid var(--line);box-shadow:0 24px 60px rgba(24,25,24,.18);padding:28px 28px 32px;animation:rise .18s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sheet-x{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:var(--pale01)}
+.sheet-x svg{width:14px;height:14px}
+.sheet h3{font-family:var(--display);font-weight:300;font-size:34px;line-height:1.1;letter-spacing:-.04em;margin:12px 52px 14px 0}
+.sheet .meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin-bottom:22px}
+.sheet .none{color:var(--muted);font-size:15px}
 
 /* states */
 .state{padding:96px 24px;text-align:center}
@@ -107,27 +134,70 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(44px,8vw,72px);lin
 footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;line-height:1.3;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
 footer a{text-decoration:none}
 
-@media (max-width:640px){
-  :root{--bar-h:64px}
-  .bar-in{padding:0 16px}
+/* phones */
+@media (max-width:599px){
+  :root{--bar-h:64px;--gut:16px}
   .logo{width:36px;overflow:hidden}
   .logo svg{width:278px}
-  .wrap{padding-left:16px;padding-right:16px}
-  .strip{padding-left:16px;padding-right:16px;margin:0 -16px}
-  .intro{padding:36px 0 22px}
-  .btn{padding:9px 14px;font-size:12px}
-  .board{margin:0 -16px;padding:0 16px;scroll-padding:0 16px}
-  .col{flex-basis:calc(100vw - 56px)}
-  .col-head{padding:22px 16px 14px}
-  .col-head h2{font-size:28px}
-  .ev .row{grid-template-columns:54px 1fr auto;gap:10px;padding:16px}
-  .ev .title{font-size:20px}
-  .ev .notes{padding:0 16px 16px}
+  .intro{padding:28px 0 18px}
+  .sub{font-size:14px}
+  .strip{padding-top:8px;padding-bottom:8px}
+  .day{min-width:46px;padding:7px 4px 6px}
+  .day small{font-size:10px}
+  .day b{font-size:22px;margin-top:1px}
+  .day .dot{margin-top:3px}
+  .nav{margin:12px 0}
+  .btn{padding:9px 14px;font-size:12px;gap:8px}
+  footer{margin-top:40px}
+  .sheet{align-items:flex-end;padding:0}
+  .sheet-panel{width:100%;max-height:88dvh;padding:24px 20px calc(28px + env(safe-area-inset-bottom, 0px))}
+}
+@media (max-width:359px){
+  .btn{padding:8px 11px;letter-spacing:.03em}
+  .ev .row{grid-template-columns:48px 1fr auto;gap:8px;padding:14px 12px}
+}
+
+/* tablets & up: compact columns; tapping opens the details sheet */
+@media (min-width:600px){
+  .board{margin:0;padding:0;scroll-padding:0} /* stay inside the page margins: exactly 3 / 7 days, nothing peeking into the gutter */
+  .col{flex-basis:calc(100% / 3)}
+  .col-head{flex-direction:column;align-items:flex-start;gap:4px;padding:16px 14px 12px}
+  .col-head h2{font-size:24px}
+  .col-head .eyebrow{font-size:11px}
+  .ev .row{grid-template-columns:1fr auto;grid-template-areas:"time chev" "body body";gap:4px 8px;padding:12px 14px 14px;cursor:pointer}
+  .ev:not([data-notes]) .row{cursor:pointer}
+  .ev .time{grid-area:time;display:flex;align-items:baseline;padding-top:0;font-size:12px}
+  .ev .time b{display:inline;font-size:13px}
+  .ev .time .end{display:inline}
+  .ev .time .end::before{content:"–";margin:0 2px}
+  .ev .body{grid-area:body}
+  .ev .title{font-size:18px}
+  .ev .meta{margin-top:5px;gap:2px 10px;font-size:10.5px;letter-spacing:.08em}
+  .ev .chev{grid-area:chev;width:24px;height:24px}
+  .ev .chev svg{width:11px;height:11px;transform:rotate(-90deg)}
+  .ev .notes{display:none!important}
+  .empty{padding:28px 12px}
+  .empty b{font-size:19px}
+}
+@media (min-width:1000px){
+  .col{flex-basis:calc(100% / 7)}
+  .col-head{padding:14px 12px 10px}
+  .col-head h2{font-size:clamp(20px,1.7vw,26px)}
+  .ev .row{padding:10px 12px 12px}
+  .ev .title{font-size:clamp(15px,1.2vw,18px)}
+  .ev .meta{font-size:10px;letter-spacing:.06em}
+}
+/* phones in landscape / short screens: don't let sticky chrome eat the viewport */
+@media (max-height:500px) and (orientation:landscape){
+  .bar,.strip{position:static}
+  .intro{padding:20px 0 12px}
+  h1{font-size:36px;margin:8px 0}
+  .sub{display:none}
 }
 @media print{
-  .bar,.strip,.chev,footer,.live{display:none!important}
+  .bar,.strip,.nav,.chev,footer,.live,.sheet{display:none!important}
   .board{display:block;overflow:visible;margin:0;padding:0}
-  .col{border:0;break-inside:avoid-page}
+  .col{border:0;box-shadow:none;break-inside:avoid-page}
   .ev{break-inside:avoid}
   .ev .notes{display:block!important}
   body{background:#fff}
@@ -150,6 +220,14 @@ footer a{text-decoration:none}
     <div>Paracelsus Recovery<br>Utoquai 43, 8008 Zurich</div>
     <a class="btn" href="tel:+41445056898">+41 44 505 68 98</a>
   </footer>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="sheet-x" data-close aria-label="Close"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1 1l12 12M13 1L1 13"/></svg></button>
+    <div id="sheetBody"></div>
+  </div>
 </div>
 
 <script src="config.js"></script>
@@ -205,7 +283,7 @@ footer a{text-decoration:none}
   const clientName = qs.get('n') || hash.get('n') || '';
 
   // ---------- state ----------
-  let events = [], selected = ymd(new Date()), lastOk = null, timer = null;
+  let events = [], evById = new Map(), selected = ymd(new Date()), lastOk = null, timer = null;
 
   // ---------- data ----------
   async function load(){
@@ -213,7 +291,7 @@ footer a{text-decoration:none}
     if (!calId) return renderState('No schedule linked', 'This link is missing a calendar. Please use the link you received from the clinical team.');
     if (!CFG.apiKey) return renderState('Not configured', 'The API key has not been set in config.js yet.');
     const now = new Date();
-    const timeMin = addDays(now, -DAYS_BACK).toISOString(), timeMax = addDays(now, DAYS_FWD).toISOString();
+    const timeMin = addDays(now, -DAYS_BACK - 7).toISOString(), timeMax = addDays(now, DAYS_FWD + 7).toISOString(); // +7: whole weeks
     const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?` + new URLSearchParams({
       key: CFG.apiKey, singleEvents:'true', orderBy:'startTime', timeMin, timeMax, timeZone: TZ, maxResults:'2500',
       fields:'summary,items(id,status,summary,description,location,start,end,updated)'
@@ -246,18 +324,35 @@ footer a{text-decoration:none}
   }
 
   // ---------- render ----------
+  // ---------- layout ----------
+  // Must match the CSS breakpoints: phones 1 day, 600–999px 3 days, ≥1000px a Mon–Sun week.
+  const mqMulti = matchMedia('(min-width:600px)'), mqWeek = matchMedia('(min-width:1000px)');
+  const perView = () => mqWeek.matches ? 7 : mqMulti.matches ? 3 : 1;
+  const shiftYmd = (s, n) => new Date(Date.parse(s + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+  const dow = s => (new Date(s + 'T12:00:00Z').getUTCDay() + 6) % 7; // Monday = 0
+  function rangeDays(now){ // always whole weeks, so the week view lines up
+    let d = ymd(addDays(now, -DAYS_BACK)); d = shiftYmd(d, -dow(d));
+    let end = ymd(addDays(now, DAYS_FWD)); end = shiftYmd(end, 6 - dow(end));
+    const out = []; while (d <= end) { out.push(d); d = shiftYmd(d, 1); }
+    return out;
+  }
+  let ui = null, lastN = perView();
+
+  // ---------- render ----------
   function renderState(h, p){
-    live.hidden = true;
+    live.hidden = true; ui = null;
     app.innerHTML = `<div class="state"><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`;
   }
   function render(){
     const now = new Date(), today = ymd(now);
     const byDay = {};
     events.forEach(ev => ev.days.forEach(d => (byDay[d] = byDay[d] || []).push(ev)));
-    const first = addDays(now, -DAYS_BACK), days = [];
-    for (let i = 0; i <= DAYS_BACK + DAYS_FWD; i++) days.push(ymd(addDays(first, i)));
+    evById = new Map(events.map(ev => [ev.id, ev]));
+    const days = rangeDays(now);
     if (!days.includes(selected)) selected = today;
-    const old = document.getElementById('board'), keepLeft = old ? old.scrollLeft : null; // keep position across auto-refresh
+    const old = document.getElementById('board');
+    const keepLeft = old && lastN === perView() ? old.scrollLeft : null; // keep position across auto-refresh
+    const keepY = window.scrollY;
 
     const title = clientName ? `${esc(clientName)}’s schedule` : 'Your schedule';
     app.innerHTML = `
@@ -269,51 +364,80 @@ footer a{text-decoration:none}
       <div class="strip">
         <div class="days" id="days">${days.map(d => {
           const dt = new Date(d + 'T12:00:00');
-          return `<button class="day${d===today?' today':''}${byDay[d]?' has':''}" data-d="${d}">
+          return `<button class="day${d===today?' today':''}${byDay[d]?' has':''}" data-d="${d}" aria-label="${fmt(dt,{weekday:'long', day:'numeric', month:'long'})}">
             <small>${fmt(dt,{weekday:'short'})}</small><b>${fmt(dt,{day:'numeric'})}</b><i class="dot"></i></button>`;
         }).join('')}</div>
-        <div class="nav"><button class="btn" id="prev">${ARROW_L}Previous</button><button class="btn" id="todayBtn">Today</button><button class="btn" id="next">Next${ARROW_R}</button></div>
       </div>
+      <div class="nav"><button class="btn" id="prev">${ARROW_L}<span></span></button><button class="btn" id="todayBtn"></button><button class="btn" id="next"><span></span>${ARROW_R}</button></div>
       <div class="board" id="board">${days.map(d => colHtml(d, byDay[d] || [], today, now)).join('')}</div>`;
 
-    const strip = document.getElementById('days'), board = document.getElementById('board');
+    const strip = document.getElementById('days'), board = document.getElementById('board'), stripBox = app.querySelector('.strip');
     const cols = [...board.children];
-    let lock = false, settle = 0; // while we scroll programmatically, don't let the scroll handler change the selection
-    const go = (d, smooth) => { const c = board.querySelector(`.col[data-d="${d}"]`); if (!c) return;
-      const left = c.offsetLeft - parseFloat(getComputedStyle(board).paddingLeft);
+    let lock = false, settle = 0, swipeEnd = 0;
+    const anchor = d => perView() === 7 ? shiftYmd(d, -dow(d)) : d; // week view always starts on Monday
+    const colOf = d => board.querySelector(`.col[data-d="${d}"]`);
+    const leftOf = c => c.offsetLeft - board.offsetLeft - parseFloat(getComputedStyle(board).paddingLeft);
+
+    // Phones: after moving to another day, bring that day's first appointment back under the sticky strip.
+    function alignTop(smooth){
+      if (perView() !== 1) return;
+      const top = board.getBoundingClientRect().top, below = stripBox.getBoundingClientRect().bottom;
+      if (top < below - 1) window.scrollBy({top: top - below, behavior: smooth ? 'smooth' : 'auto'});
+    }
+    function go(d, smooth){
+      d = anchor(d); const c = colOf(d); if (!c) return;
+      const left = leftOf(c);
       selected = d; lock = true; mark();
       board.scrollTo({left, behavior: smooth && Math.abs(left - board.scrollLeft) <= 4 * c.offsetWidth ? 'smooth' : 'auto'});
-      clearTimeout(settle); settle = setTimeout(() => { lock = false; mark(); }, 700); };
-    // Strip shows the visible days (light) and the selected/leftmost one (dark).
+      clearTimeout(settle); settle = setTimeout(() => { lock = false; mark(); }, 700);
+      alignTop(smooth);
+    }
+    // Strip: light = days on screen, dark = the day shown (phones only).
     function mark(){
-      const l = board.scrollLeft, r = l + board.clientWidth;
-      const vis = new Set(cols.filter(c => c.offsetLeft < r - 40 && c.offsetLeft + c.offsetWidth > l + 40).map(c => c.dataset.d));
-      strip.querySelectorAll('.day').forEach(b => { const on = b.dataset.d === selected; b.classList.toggle('sel', on); b.setAttribute('aria-pressed', on); b.classList.toggle('vis', vis.has(b.dataset.d)); });
-      const sb = strip.querySelector('.day.sel');
-      if (sb) strip.scrollLeft = sb.offsetLeft - strip.offsetLeft - strip.clientWidth/2 + sb.offsetWidth/2;
+      const l = board.scrollLeft, r = l + board.clientWidth, n = perView();
+      const vis = cols.filter(c => { const x = leftOf(c) + parseFloat(getComputedStyle(board).paddingLeft); return x < r - 20 && x + c.offsetWidth > l + 20; }).map(c => c.dataset.d);
+      const visSet = new Set(vis);
+      strip.querySelectorAll('.day').forEach(b => {
+        const on = b.dataset.d === selected;
+        b.classList.toggle('sel', on && n === 1); b.setAttribute('aria-pressed', on);
+        b.classList.toggle('vis', visSet.has(b.dataset.d) && n > 1);
+      });
+      const mid = strip.querySelector(`.day[data-d="${n === 1 ? selected : (vis[Math.floor(vis.length / 2)] || selected)}"]`);
+      if (mid) strip.scrollLeft = mid.offsetLeft - strip.offsetLeft - strip.clientWidth / 2 + mid.offsetWidth / 2;
       return vis;
+    }
+    function labels(){
+      const wk = perView() === 7;
+      document.querySelector('#prev span').textContent = wk ? 'Previous week' : 'Previous';
+      document.querySelector('#next span').textContent = wk ? 'Next week' : 'Next';
+      document.getElementById('todayBtn').textContent = wk ? 'This week' : 'Today';
     }
     let raf = 0;
     board.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
       if (lock) { clearTimeout(settle); settle = setTimeout(() => { lock = false; mark(); }, 150); return; }
       const vis = mark();
-      const firstVis = cols.find(c => vis.has(c.dataset.d)); // after a swipe the leftmost visible day is the selected one
-      if (firstVis && firstVis.dataset.d !== selected) { selected = firstVis.dataset.d; mark(); }
+      if (vis[0] && vis[0] !== selected) { selected = vis[0]; mark(); } // after a swipe the leftmost visible day is the selected one
+      clearTimeout(swipeEnd); swipeEnd = setTimeout(() => alignTop(true), 220);
     }); }, {passive: true});
-    if (keepLeft !== null) { board.scrollLeft = keepLeft; mark(); } else go(selected, false);
+
+    labels();
+    if (keepLeft !== null) { board.scrollLeft = keepLeft; window.scrollTo(0, keepY); mark(); } else { go(selected, false); window.scrollTo(0, keepY); }
+    lastN = perView();
 
     strip.addEventListener('click', e => { const b = e.target.closest('.day'); if (b) go(b.dataset.d, true); });
-    const step = n => go(days[Math.min(days.length - 1, Math.max(0, days.indexOf(selected) + n))], true);
+    const step = dir => { const n = perView(); go(days[Math.min(days.length - 1, Math.max(0, days.indexOf(anchor(selected)) + dir * n))], true); };
     document.getElementById('prev').onclick = () => step(-1);
     document.getElementById('next').onclick = () => step(1);
     document.getElementById('todayBtn').onclick = () => go(today, true);
     app.querySelectorAll('.ev').forEach(el => {
       el.querySelector('.row').addEventListener('click', () => {
+        if (perView() > 1) return openSheet(evById.get(el.dataset.ev), el.closest('.col').dataset.d, el.querySelector('.row'));
         if (!el.dataset.notes) return;
         el.classList.toggle('open'); el.classList.contains('open') ? openEl.add(el.dataset.id) : openEl.delete(el.dataset.id);
         el.querySelector('.row').setAttribute('aria-expanded', el.classList.contains('open'));
       });
     });
+    ui = { relayout(){ labels(); go(selected, false); lastN = perView(); } };
   }
   function colHtml(d, list, today, now){
     const dt = new Date(d + 'T12:00:00');
@@ -323,23 +447,51 @@ footer a{text-decoration:none}
       ${list.length ? list.map(ev => evHtml(ev, now, d)).join('') : `<div class="empty"><b>Nothing scheduled</b>A free day.</div>`}
     </section>`;
   }
+  const isNowEv = (ev, now) => !ev.allDay && ev.s <= now && now < ev.e;
+  function metaHtml(ev, now){
+    return [isNowEv(ev, now) ? `<span class="nowtag">Now</span>` : '', ev.loc ? `<span>${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span>${dur(ev.e - ev.s)}</span>` : ''].filter(Boolean).join('');
+  }
   function evHtml(ev, now, d){
     const hasNotes = !!ev.notes.trim();
-    const isNow = !ev.allDay && ev.s <= now && now < ev.e;
     const isPast = !ev.allDay && ev.e <= now && ymd(ev.e) === ymd(now);
     const key = ev.id + '|' + d, open = openEl.has(key);
     const time = ev.allDay ? `<div class="time allday"><b>All day</b></div>`
-               : `<div class="time"><b>${hhmm(ev.s)}</b>${hhmm(ev.e)}</div>`;
-    const meta = [isNow ? `<span class="nowtag">Now</span>` : '', ev.loc ? `<span>${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span>${dur(ev.e - ev.s)}</span>` : ''].filter(Boolean).join('');
-    return `<article class="ev${isNow?' now':''}${isPast?' past':''}${open?' open':''}" data-id="${esc(key)}" ${hasNotes?'data-notes="1"':''}>
-      <button class="row" aria-expanded="${open}" ${hasNotes?'':'style="cursor:default"'}>
+               : `<div class="time"><b>${hhmm(ev.s)}</b><span class="end">${hhmm(ev.e)}</span></div>`;
+    const meta = metaHtml(ev, now);
+    return `<article class="ev${isNowEv(ev, now)?' now':''}${isPast?' past':''}${open?' open':''}" data-id="${esc(key)}" data-ev="${esc(ev.id)}" ${hasNotes?'data-notes="1"':''}>
+      <button class="row" aria-expanded="${open}">
         ${time}
-        <div><div class="title">${esc(ev.title)}</div>${meta?`<div class="meta eyebrow">${meta}</div>`:''}</div>
+        <div class="body"><div class="title">${esc(ev.title)}</div>${meta?`<div class="meta eyebrow">${meta}</div>`:''}</div>
         <span class="chev${hasNotes?'':' hidden'}" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l5 5 5-5"/></svg></span>
       </button>
-      ${hasNotes ? `<div class="notes"><div class="box"><div class="eyebrow">Notes</div>${cleanHtml(ev.notes)}</div></div>` : ''}
+      ${hasNotes ? `<div class="notes"><div class="box rich"><div class="eyebrow">Notes</div>${cleanHtml(ev.notes)}</div></div>` : ''}
     </article>`;
   }
+
+  // ---------- details sheet (tablet / desktop columns are too narrow for inline notes) ----------
+  const sheet = document.getElementById('sheet'), sheetBody = document.getElementById('sheetBody');
+  let sheetReturn = null;
+  function openSheet(ev, d, from){
+    if (!ev) return;
+    const dt = new Date(d + 'T12:00:00'), meta = metaHtml(ev, new Date());
+    sheetBody.innerHTML = `<div class="eyebrow">${fmt(dt,{weekday:'long', day:'numeric', month:'long'})} · ${ev.allDay ? 'All day' : hhmm(ev.s) + '–' + hhmm(ev.e)}</div>
+      <h3 id="sheetTitle">${esc(ev.title)}</h3>${meta ? `<div class="meta eyebrow">${meta}</div>` : ''}
+      ${ev.notes.trim() ? `<div class="box rich"><div class="eyebrow">Notes</div>${cleanHtml(ev.notes)}</div>` : `<p class="none">No notes for this appointment.</p>`}`;
+    sheetReturn = from; sheet.hidden = false; document.documentElement.classList.add('locked');
+    sheet.querySelector('.sheet-x').focus();
+  }
+  function closeSheet(){
+    if (sheet.hidden) return;
+    sheet.hidden = true; document.documentElement.classList.remove('locked');
+    if (sheetReturn && document.contains(sheetReturn)) sheetReturn.focus();
+  }
+  sheet.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+  // Rotation / resize: switch layout and re-align to the current day or week.
+  let rz = 0;
+  window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (perView() === 1) closeSheet(); ui && ui.relayout(); }, 150); });
+
   function dur(ms){ const m = Math.round(ms/6e4), h = Math.floor(m/60), r = m%60; return h ? (r ? `${h} h ${r} min` : `${h} h`) : `${m} min`; }
 
   // ---------- demo data ----------
@@ -347,7 +499,7 @@ footer a{text-decoration:none}
     const t = ymd(new Date());
     const off = (new Intl.DateTimeFormat('en-GB',{timeZone:TZ,timeZoneName:'longOffset'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName')||{}).value || 'GMT+01:00';
     const z = off.replace('GMT','') || '+00:00';
-    const mk = (d,h1,m1,h2,m2,title,notes,loc) => ({ id:title+h1, title, notes, loc:loc||'', allDay:false,
+    const mk = (d,h1,m1,h2,m2,title,notes,loc) => ({ id:d+title+h1, title, notes, loc:loc||'', allDay:false,
       s:new Date(`${d}T${String(h1).padStart(2,'0')}:${String(m1).padStart(2,'0')}:00${z}`), e:new Date(`${d}T${String(h2).padStart(2,'0')}:${String(m2).padStart(2,'0')}:00${z}`), days:[d] });
     const tm = ymd(addDays(new Date(), 1)), t2 = ymd(addDays(new Date(), 2)), t3 = ymd(addDays(new Date(), 3));
     return [

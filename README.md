@@ -19,11 +19,15 @@ The client's calendar must be shared **publicly** ("Make available to public →
 
 ## What clients see
 
-- Day strip (7 days back, 21 ahead), today highlighted; current appointment outlined in green.
-- Each appointment: start/end time, title, location, duration; tap to expand **Notes** (the event description — menu plans, lab prep instructions, etc.).
+- Every day side by side, swipeable (like the old WordPress page), covering whole weeks from ~1 week back to ~3 weeks ahead:
+  - **Phones:** one day per screen with the next one peeking in; after swiping, the page jumps back to the top of that day.
+  - **iPad portrait / phones in landscape (600–999 px):** three days.
+  - **iPad landscape / desktop (≥1000 px):** the full Monday–Sunday week, with Previous / This / Next week.
+- Sticky day strip to jump to any day; today and the current appointment are highlighted.
+- Each appointment: start/end time, title, location, duration; tap for **Notes** (the event description — menu plans, lab prep instructions, etc.): inline on phones, a details card on iPad/desktop.
 - All-day events (e.g. "fasting from midnight") pinned at the top of the day.
 - Auto-refresh every 60 s and whenever the page regains focus; "Live · 14:02" indicator in the header turns amber if the last refresh failed.
-- Works on phones; printable (notes expanded).
+- Handles iPhone notch/safe areas, rotation and short landscape screens; printable (notes expanded).
 
 ## Setup (one-off)
 
