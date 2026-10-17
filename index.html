@@ -111,6 +111,13 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(40px,8vw,72px);lin
 .rich ul,.rich ol{margin:.3em 0 .6em;padding-left:1.2em}
 .rich a{color:var(--green02)}
 .box{background:var(--yellow01);padding:16px 18px}
+.allday{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.chip{max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:5px 11px;border-radius:999px;background:var(--pale02);font-size:12px;font-weight:450;line-height:1.3;color:var(--ink)}
+.chip.notes{background:var(--yellow01)}
+.col.today .allday .chip{background:#fff}
+.col.today .allday .chip.notes{background:var(--yellow01)}
+.col.pastday .ev,.col.pastday .allday{opacity:.55}
+.ev .meta .loc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;flex:0 1 auto}
 .empty{padding:36px 16px;text-align:center;color:var(--muted);font-size:14px}
 .empty b{display:block;font-family:var(--display);font-weight:300;font-size:22px;letter-spacing:-.03em;color:var(--ink);margin-bottom:6px}
 
@@ -173,6 +180,10 @@ footer a{text-decoration:none}
   .ev .body{grid-area:body}
   .ev .title{font-size:18px}
   .ev .meta{margin-top:5px;gap:2px 10px;font-size:10.5px;letter-spacing:.08em}
+  .ev .meta .loc{-webkit-line-clamp:1;word-break:break-all;flex-basis:100%} /* full address is in the details card */
+  .ev .meta .dur{display:none} /* the time range already says it */
+  .allday{padding:8px 12px 10px;gap:4px}
+  .chip{font-size:11px;padding:4px 9px}
   .ev .chev{grid-area:chev;width:24px;height:24px}
   .ev .chev svg{width:11px;height:11px;transform:rotate(-90deg)}
   .ev .notes{display:none!important}
@@ -180,7 +191,8 @@ footer a{text-decoration:none}
   .empty b{font-size:19px}
 }
 @media (min-width:1000px){
-  .col{flex-basis:calc(100% / 7)}
+  .col{flex-basis:calc(100% / 7);scroll-snap-align:none}
+  .col.mon{scroll-snap-align:start} /* swiping/scrolling always lands on a whole Mon–Sun week */
   .col-head{padding:14px 12px 10px}
   .col-head h2{font-size:clamp(20px,1.7vw,26px)}
   .ev .row{padding:10px 12px 12px}
@@ -444,19 +456,22 @@ footer a{text-decoration:none}
         el.querySelector('.row').setAttribute('aria-expanded', el.classList.contains('open'));
       });
     });
+    app.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => openSheet(evById.get(ch.dataset.ev), ch.closest('.col').dataset.d, ch)));
     ui = { relayout(){ labels(); go(selected, false); lastN = perView(); } };
   }
   function colHtml(d, list, today, now){
     const dt = new Date(d + 'T12:00:00');
-    list = list.slice().sort((a,b) => (a.allDay === b.allDay ? a.s - b.s : a.allDay ? -1 : 1));
-    return `<section class="col${d===today?' today':''}" data-d="${d}" aria-label="${fmt(dt,{weekday:'long', day:'numeric', month:'long'})}">
+    const allDay = list.filter(ev => ev.allDay), timed = list.filter(ev => !ev.allDay).sort((a,b) => a.s - b.s);
+    // All-day items (residence, "day 3/28", fasting…) repeat every day — show them as small chips, not full rows.
+    const chips = allDay.length ? `<div class="allday">${allDay.map(ev => `<button class="chip${ev.notes.trim() ? ' notes' : ''}" data-ev="${esc(ev.id)}" title="${esc(ev.title)}">${esc(ev.title)}</button>`).join('')}</div>` : '';
+    return `<section class="col${d===today?' today':''}${d < today ? ' pastday' : ''}${dow(d) === 0 ? ' mon' : ''}" data-d="${d}" aria-label="${fmt(dt,{weekday:'long', day:'numeric', month:'long'})}">
       <div class="col-head"><h2>${d===today ? 'Today' : fmt(dt,{weekday:'long'})}</h2><span class="eyebrow">${fmt(dt,{day:'numeric', month:'long'})}</span></div>
-      ${list.length ? list.map(ev => evHtml(ev, now, d)).join('') : `<div class="empty"><b>Nothing scheduled</b>A free day.</div>`}
+      ${chips}${timed.length ? timed.map(ev => evHtml(ev, now, d)).join('') : allDay.length ? '' : `<div class="empty"><b>Nothing scheduled</b>A free day.</div>`}
     </section>`;
   }
   const isNowEv = (ev, now) => !ev.allDay && ev.s <= now && now < ev.e;
   function metaHtml(ev, now){
-    return [isNowEv(ev, now) ? `<span class="nowtag">Now</span>` : '', ev.loc ? `<span>${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span>${dur(ev.e - ev.s)}</span>` : ''].filter(Boolean).join('');
+    return [isNowEv(ev, now) ? `<span class="nowtag">Now</span>` : '', ev.loc ? `<span class="loc">${esc(ev.loc)}</span>` : '', (!ev.allDay && ev.e - ev.s >= 60e3) ? `<span class="dur">${dur(ev.e - ev.s)}</span>` : ''].filter(Boolean).join('');
   }
   function evHtml(ev, now, d){
     const hasNotes = !!ev.notes.trim();
@@ -504,12 +519,17 @@ footer a{text-decoration:none}
   // ---------- demo data ----------
   function demoEvents(){
     const t = ymd(new Date());
+    const stay = [];
+    for (let i = -9; i <= 18; i++) { const d = ymd(addDays(new Date(), i)), k = i + 10;
+      stay.push({id:'res'+d, title:'Residence Serenitas', notes:'', loc:'', allDay:true, s:new Date(d+'T00:00:00'), e:new Date(d+'T00:00:00'), days:[d]},
+                {id:'day'+d, title:`Day ${k}/28`, notes:'', loc:'', allDay:true, s:new Date(d+'T00:00:00'), e:new Date(d+'T00:00:00'), days:[d]}); }
     const off = (new Intl.DateTimeFormat('en-GB',{timeZone:TZ,timeZoneName:'longOffset'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName')||{}).value || 'GMT+01:00';
     const z = off.replace('GMT','') || '+00:00';
     const mk = (d,h1,m1,h2,m2,title,notes,loc) => ({ id:d+title+h1, title, notes, loc:loc||'', allDay:false,
       s:new Date(`${d}T${String(h1).padStart(2,'0')}:${String(m1).padStart(2,'0')}:00${z}`), e:new Date(`${d}T${String(h2).padStart(2,'0')}:${String(m2).padStart(2,'0')}:00${z}`), days:[d] });
     const tm = ymd(addDays(new Date(), 1)), t2 = ymd(addDays(new Date(), 2)), t3 = ymd(addDays(new Date(), 3));
     return [
+      ...stay,
       {id:'ad', title:'Lab preparation — fasting from midnight', notes:'<b>No food after 00:00.</b> Water is fine. Blood draw at 07:30 in your residence.', loc:'', allDay:true, s:new Date(t+'T00:00:00'), e:new Date(t+'T00:00:00'), days:[t]},
       mk(t,7,30,8,0,'Blood draw & vitals','Nurse will come to the residence. Please stay seated 10 min afterwards.','Residence'),
       mk(t,8,30,9,15,'Breakfast','<p><b>Menu:</b> Bircher muesli with berries, green tea, poached eggs on rye.</p><p>Supplements: Omega-3, Vitamin D (with food).</p>','Dining room'),
@@ -526,6 +546,7 @@ footer a{text-decoration:none}
       mk(t2,8,0,8,45,'Breakfast','<b>Menu:</b> Greek yoghurt, walnuts, honey; herbal tea.','Dining room'),
       mk(t2,10,0,11,0,'Psychotherapy — Dr. Keller','','Therapy room 2'),
       mk(t2,14,0,15,30,'Outdoor walk — lake promenade','Comfortable shoes and a light jacket.','Meet at reception'),
+      mk(t2,16,0,17,0,'Fibro Scan — Prof. Sauter','Fasting 4 hours before.','Gastrozentrum Hirslanden - Swiss Digestive Health Center - Klinik Hirslanden, Witellikerstrasse 40, 8032 Zürich, Switzerland'),
       mk(t3,9,30,10,30,'Family session (video)','Link will be sent by the therapist 10 min before.','Therapy room 1'),
       mk(t3,13,0,14,0,'Lunch','<b>Menu:</b> Risotto with porcini, rocket salad.','Dining room'),
     ];
