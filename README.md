@@ -7,13 +7,25 @@ Live at **https://cal.paracelsus-recovery.com**
 
 ## Link format
 
+**Short link** (calendars on clinic accounts, e.g. `abc@paracelsus-recovery.com`):
+
+```
+https://cal.paracelsus-recovery.com/<first-name>-<initials>      e.g. /anna-abc
+```
+
+The part after the last `-` is the calendar account's name before `@paracelsus-recovery.com`; the rest becomes the heading ("Anna's schedule"). GitHub Pages serves `404.html` for these paths, which forwards to the schedule page and restores the pretty URL.
+
+**Long link** (any other calendar, or names without Latin letters):
+
 ```
 https://cal.paracelsus-recovery.com/?c=<calendar-id>&n=<first name>
 ```
 
-- `c` — the Google Calendar ID (Calendar settings → *Integrate calendar* → "Calendar ID"). It may also be base64url-encoded to keep links tidy.
-- `n` — optional, shown in the heading ("Anna's schedule"). Leave out for "Your schedule".
+- `c` — the Google Calendar ID (Calendar settings → *Integrate calendar* → "Calendar ID"), optionally base64url-encoded.
+- `n` — shown in the heading ("Anna's schedule").
 - `?demo` — shows sample data (useful for showing the design).
+
+The link builder (`/link.html`) picks the right format automatically.
 
 The client's calendar must be shared **publicly** ("Make available to public → See all event details"), as the current WordPress pages already require.
 

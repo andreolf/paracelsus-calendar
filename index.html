@@ -280,7 +280,14 @@ footer a{text-decoration:none}
   if (calId && !calId.includes('@') && !calId.includes('calendar.google.com')) { // allow base64url-encoded ids
     try { const dec = atob(calId.replace(/-/g,'+').replace(/_/g,'/')); if (dec.includes('@')) calId = dec; } catch(e){}
   }
-  const clientName = qs.get('n') || hash.get('n') || '';
+  let clientName = qs.get('n') || hash.get('n') || '';
+  // Short links: /<name>-<initials> (404.html forwards them as ?s=…), e.g. /anna-abc → abc@paracelsus-recovery.com, "Anna".
+  const slug = (qs.get('s') || '').toLowerCase().match(/^([a-z0-9]+(?:-[a-z0-9]+)*)-([a-z0-9._]+)$/);
+  if (slug && !calId) {
+    calId = slug[2] + '@' + (CFG.slugDomain || 'paracelsus-recovery.com');
+    clientName = slug[1].split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-');
+    history.replaceState(null, '', new URL(slug[0], location.href.split(/[?#]/)[0]).pathname + location.hash);
+  }
 
   // ---------- state ----------
   let events = [], evById = new Map(), selected = ymd(new Date()), lastOk = null, timer = null;

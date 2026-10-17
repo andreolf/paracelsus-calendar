@@ -88,15 +88,16 @@ form{border-top:1px solid var(--line)}
       <div class="hint" id="calHint">Google Calendar → the client's calendar → Settings and sharing → <b>Integrate calendar</b> → Calendar ID. The public URL or embed code also works.</div>
     </div>
     <div class="field">
-      <label class="eyebrow" for="name">Client first name <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input id="name" name="name" spellcheck="false" placeholder="e.g. Anna">
-      <div class="hint">Shown as the page heading: “Anna’s schedule”. Leave empty for “Your schedule”.</div>
+      <label class="eyebrow" for="name">Client first name</label>
+      <input id="name" name="name" spellcheck="false" autocapitalize="words" placeholder="e.g. Anna" required>
+      <div class="hint" id="nameHint">Used in the link and as the page heading: <code>cal.paracelsus-recovery.com/anna-…</code> shows “Anna’s schedule”.</div>
     </div>
   </form>
 
   <section class="out" id="out" hidden>
     <div class="eyebrow">Client link</div>
     <div class="link" id="link"></div>
+    <div class="hint" id="linkNote" hidden style="margin:-8px 0 16px"></div>
     <div class="actions">
       <button class="btn solid" id="copy" type="button">Copy link</button>
       <a class="btn" id="open" href="#" target="_blank" rel="noopener">Open preview</a>
@@ -123,6 +124,12 @@ form{border-top:1px solid var(--line)}
   const cal = $('cal'), name = $('name'), out = $('out'), linkEl = $('link'), calHint = $('calHint'), check = $('check');
   const defaultHint = calHint.innerHTML;
   const BASE = new URL('./', location.href).href; // works on github.io now and on cal.paracelsus-recovery.com later
+  const SLUG_DOMAIN = (CFG.slugDomain || 'paracelsus-recovery.com').toLowerCase();
+  const nameHint = $('nameHint'), defaultNameHint = nameHint.innerHTML;
+  // "Zoë Anna" → "zoe-anna" (Latin letters and digits only, so links survive copy/paste into WhatsApp/email)
+  const slugify = s => s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  // Same rule the schedule page uses to turn the slug back into a heading.
+  const display = s => s.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('-');
 
   // Accepts a bare ID, a public/embed URL, an iCal URL or a ?cid= share link; returns {id, warn}.
   function extractId(raw){
@@ -151,12 +158,20 @@ form{border-top:1px solid var(--line)}
     const {id, warn} = extractId(cal.value);
     calHint.className = 'hint' + (warn ? ' warn' : '');
     calHint.innerHTML = warn || (id && id !== cal.value.trim() ? `Found: <code>${id.replace(/</g,'&lt;')}</code>` : defaultHint);
-    if (!id) { out.hidden = true; return; }
-    const p = new URLSearchParams({c: b64url(id)});
-    const n = name.value.trim();
-    if (n) p.set('n', n);
-    const url = BASE + '?' + p.toString();
+    const n = name.value.trim(), s = slugify(n);
+    nameHint.className = 'hint';
+    nameHint.innerHTML = !n ? defaultNameHint : s ? `Page heading: “${display(s).replace(/</g,'&lt;')}’s schedule”.` : 'Name kept as typed (no Latin letters for the short link).';
+    if (!id || !n) { out.hidden = true; return; }
+    // Short link /<name>-<initials> for calendars on the clinic's own accounts (e.g. abc@paracelsus-recovery.com).
+    const at = id.toLowerCase().lastIndexOf('@'), local = id.slice(0, at).toLowerCase(), domain = id.slice(at + 1).toLowerCase();
+    let url, note = '';
+    if (s && domain === SLUG_DOMAIN && /^[a-z0-9._]+$/.test(local)) url = BASE + s + '-' + local;
+    else {
+      url = BASE + '?' + new URLSearchParams({c: b64url(id), n});
+      note = !s ? 'Long link: the name has no Latin letters.' : 'Long link: short links work only for @' + SLUG_DOMAIN + ' calendars.';
+    }
     linkEl.textContent = url; $('open').href = url; out.hidden = false;
+    $('linkNote').textContent = note; $('linkNote').hidden = !note;
     $('copy').textContent = 'Copy link';
     clearTimeout(checkTimer);
     if (id !== lastChecked) { check.className = 'check hint'; check.textContent = ''; checkTimer = setTimeout(() => verify(id), 500); }
