@@ -172,7 +172,7 @@ form{border-top:1px solid var(--line)}
     try {
       const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?${q}`, {cache:'no-store'});
       if (id !== extractId(cal.value).id) return;
-      if (r.ok) { const j = await r.json(); check.className = 'check hint ok'; check.textContent = `✓ Calendar is public — ${(j.items||[]).length} appointments in the next 14 days.`; }
+      if (r.ok) { const j = await r.json(); check.className = 'check hint ok'; const n = (j.items||[]).length; check.textContent = `✓ Calendar is public — ${n} appointment${n === 1 ? '' : 's'} in the next 14 days.`; }
       else if (r.status === 404) { check.className = 'check hint warn'; check.innerHTML = 'Calendar not found or <b>not public</b>. Turn on “Make available to public → See all event details”, then try again.'; lastChecked = ''; }
       else { check.className = 'check hint warn'; check.textContent = `Couldn’t check (error ${r.status}). The link may still work — use Open preview.`; lastChecked = ''; }
     } catch(e) { check.className = 'check hint warn'; check.textContent = 'Couldn’t reach Google to check. The link may still work — use Open preview.'; lastChecked = ''; }
