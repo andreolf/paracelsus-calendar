@@ -40,4 +40,4 @@ Share the client's Google Calendar publicly, then open **`/link.html`** (the cli
 - `index.html` — the whole app (no build step, no dependencies besides Google Fonts).
 - `link.html` — client link builder for the clinical team (nothing stored).
 - `config.js` — API key + display settings.
-- `.nojekyll` — GitHub Pages. (`CNAME` is added back once the `cal.` DNS record exists.)
+- `CNAME`, `.nojekyll` — GitHub Pages (custom domain `cal.paracelsus-recovery.com`).

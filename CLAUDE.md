@@ -12,7 +12,7 @@ Static replacement for the WordPress client calendar pages (`paracelsus-recovery
 - `index.html` — whole app, no build step. Reads `?c=<calendarId>&n=<first name>` (or `#c=`), calls Google Calendar API v3 directly with the API key from `config.js`, renders a day strip (7 back / 21 ahead) and the selected day's events with expandable sanitized notes. Auto-refresh 60 s + on focus. `?demo` = sample data.
 - `config.js` — `apiKey` (empty until created), timezone Europe/Zurich, ranges.
 - `link.html` — client link builder for Maria (clinical team): paste Calendar ID / public URL / embed code + first name → base64url `?c=…&n=…` link to copy; rejects secret iCal addresses; checks the calendar is public once `apiKey` is set.
-- `CNAME` — removed for now (16 Oct 2026): with it set before DNS exists, github.io redirects to the unresolvable custom domain. Re-add (`echo cal.paracelsus-recovery.com > CNAME`, or set Custom domain in Settings → Pages) right after David creates the DNS record. `.nojekyll` present.
+- `CNAME` — `cal.paracelsus-recovery.com` (restored 17 Oct 2026 after David added the Cloudflare record `cal CNAME andreolf.github.io`, DNS only / grey cloud — keep it unproxied so GitHub can renew the HTTPS cert). `.nojekyll` present.
 - Requires each client calendar to be shared **publicly** ("see all event details"). Confirmed by Maria Pena (16 Oct 2026): she creates a calendar per client, makes it public, and copies its ID into WordPress — same step now goes into `link.html`. Still verify with one real calendar ID before rollout. If they are not public, fallback plan: Google Apps Script web app (runs as clinic account, returns JSON) or a GitHub Action polling private ICS URLs into `data/*.json`; `load()` in index.html is the only place to change.
 - No client data in the repo on purpose (repo may be public; Pages from a private repo needs GitHub Pro).
 
@@ -23,7 +23,7 @@ Pale01 `#FAF6EE` bg, Pale02 `#F3EDDA`, Yellow01 `#FFE9C0` (notes box / open chev
 1. ~~Create repo, push, enable Pages from `main` / root~~ — done 16 Oct 2026. Live at https://andreolf.github.io/paracelsus-calendar/
 2. ~~Google Cloud API key~~ — done 16 Oct 2026 (key "paracelsus-calendar-web" in config.js, public by design; restrictions verified: other/empty referrers blocked). Was: enable Calendar API, create API key restricted to HTTP referrers `https://cal.paracelsus-recovery.com/*` and `https://andreolf.github.io/*`, API restriction = Calendar API only → paste into `config.js`, commit.
 3. Test with a real calendar: `https://andreolf.github.io/paracelsus-calendar/?c=<id>` before DNS.
-4. David: `cal CNAME andreolf.github.io`; then re-add the `CNAME` file / custom domain, and tick Enforce HTTPS in Pages settings once the cert is issued.
+4. ~~DNS + custom domain + HTTPS~~ — done 17 Oct 2026. Live at https://cal.paracelsus-recovery.com/
 5. Send Jan/David the demo link (`?demo`) and the per-client link format.
 
 ## Nice-to-haves (not started)
