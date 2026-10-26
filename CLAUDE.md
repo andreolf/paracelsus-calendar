@@ -1,30 +1,33 @@
 # Paracelsus client schedule — context for Claude Code
 
 ## What this is
-Static replacement for the WordPress client calendar pages (`paracelsus-recovery.com/event/<client>-calendar`, built by the Fooz agency), to be served at **https://cal.paracelsus-recovery.com** from GitHub Pages. Owner: Francesco Andreoli (andreolf). DNS will be set by David Bachmann (dacide.com).
+Live at **https://cal.paracelsus-recovery.com** (since 17 Oct 2026), served from GitHub Pages (`main` / root). Replaces the WordPress client calendar pages (`paracelsus-recovery.com/event/<initials>/`, built by the Fooz agency), which lagged behind Google Calendar. Owner: Francesco Andreoli (andreolf). DNS: David Bachmann (dacide.com). Client links are issued by Maria Pena (clinical team).
 
-## Why (14 Oct 2026)
-- Jan Gerber (CEO) email "URGENT! Online schedule issues": the WordPress pages don't feed through from Google Calendar, or only with massive delays; clients unhappy. WordPress is being retired.
-- David's voice note: build it standalone with Claude Code, host on andreolf's GitHub, he points `cal.` at it.
-- Hard requirement (Jan, Feb 2026): appointment **notes** from the Google Calendar event description (menu plans, lab-prep instructions, "what's for lunch") must be visible — expand/collapse per event. Clients must only ever receive the link, never direct calendar access.
+Full history, decisions and lessons live in Francesco's private vault `andreolf/second-brain`: `Projects/paracelsus-recovery/paracelsus-client-calendar.md` (current state), `…/paracelsus-client-calendar-log.md` (decisions), `…/docs/2026-10-client-calendar-build-record.md` (full record).
+
+## Requirements
+- Jan (Feb 2026): appointment **notes** from the event description (menus, lab prep) visible per event. Clients only ever get a link, never calendar access.
+- Maria (16 Oct 2026): every day side by side, swipeable, like the WordPress page.
 
 ## How it works
-- `index.html` — whole app, no build step. Reads `?c=<calendarId>&n=<first name>` (or `#c=`), calls Google Calendar API v3 directly with the API key from `config.js`, renders a day strip (7 back / 21 ahead) and the selected day's events with expandable sanitized notes. Auto-refresh 60 s + on focus. `?demo` = sample data.
-- `config.js` — `apiKey` (empty until created), timezone Europe/Zurich, ranges.
-- `link.html` — client link builder for Maria (clinical team): paste Calendar ID / public URL / embed code + first name (required) → short link `/<name>-<initials>` for @paracelsus-recovery.com calendars, else base64url `?c=…&n=…`; `404.html` routes the short paths. Note: client calendar IDs are initials (e.g. abc@), so public calendars are guessable — Francesco accepted this (17 Oct 2026); Apps Script + private calendars is the fix if that changes; rejects secret iCal addresses; checks the calendar is public once `apiKey` is set.
-- `CNAME` — `cal.paracelsus-recovery.com` (restored 17 Oct 2026 after David added the Cloudflare record `cal CNAME andreolf.github.io`, DNS only / grey cloud — keep it unproxied so GitHub can renew the HTTPS cert). `.nojekyll` present.
-- Requires each client calendar to be shared **publicly** ("see all event details"). Confirmed by Maria Pena (16 Oct 2026): she creates a calendar per client, makes it public, and copies its ID into WordPress — same step now goes into `link.html`. Still verify with one real calendar ID before rollout. If they are not public, fallback plan: Google Apps Script web app (runs as clinic account, returns JSON) or a GitHub Action polling private ICS URLs into `data/*.json`; `load()` in index.html is the only place to change.
-- No client data in the repo on purpose (repo may be public; Pages from a private repo needs GitHub Pro).
+- `index.html` — the app, no build step. Reads the client's **public** Google Calendar with Calendar API v3 from the browser using the key in `config.js`. Refresh every 60 s and on focus. Layouts: phones one day + peek; 600–999 px three days; ≥ 1000 px Monday–Sunday week (snaps to Mondays). All-day items render as chips; tablet/desktop open a details card on tap. Range is whole weeks, ~1 back to ~3 ahead. `?demo` = sample data (fictional; keep it that way).
+- Links: short `/<first-name>-<initials>` → `<initials>@paracelsus-recovery.com` (via `404.html` → `/?s=…`, then `history.replaceState`); long `/?c=<base64url id>&n=<name>` for other calendars.
+- `link.html` — link builder for Maria: Calendar ID / public URL / embed code / `?cid=` link + first name (required) → link; rejects secret iCal addresses; checks the calendar is public.
+- `config.js` — browser API key "paracelsus-calendar-web", public by design: restricted to websites `andreolf.github.io/*` + `cal.paracelsus-recovery.com/*` and to the Calendar API (verified). Timezone Europe/Zurich, ranges, refresh.
+- `CNAME` — `cal.paracelsus-recovery.com`. Cloudflare record `cal` CNAME `andreolf.github.io` must stay **DNS only (grey cloud)** or certificate renewal fails. `.nojekyll` present.
 
-## Brand
-Pale01 `#FAF6EE` bg, Pale02 `#F3EDDA`, Yellow01 `#FFE9C0` (notes box / open chevron), Yellow03 `#FFD48B`, Green02 `#576A28` ("now" + live dot), Ink `#181918`. Display: Reckless Neue → Source Serif 4 fallback; body: TWK Lausanne → Inter fallback. Pill buttons.
+## Rules
+- **No client data in this public repo, ever**: no client names, initials, calendar IDs or appointment contents, not even as examples (use `/anna-abc`). A real client link slipped in once (17 Oct 2026) and history had to be rewritten.
+- Changes go through a branch + pull request; Francesco's hooks block pushing to the default branch and `rm -rf` (use `trash`).
+- Brand: paracelsus-recovery.com style (Reckless Neue / TWK Lausanne Pan; the brand font files aren't CORS-enabled, so the site uses Newsreader / Inter), Pale01 `#FAF6EE` bg, Ink `#181918`, Yellow01 `#FFE9C0` notes, Green02 `#576A28` "now", eyebrows `#6A665B`, hairlines `#C5BEAA`, pill buttons.
 
-## Remaining steps
-1. ~~Create repo, push, enable Pages from `main` / root~~ — done 16 Oct 2026. Live at https://andreolf.github.io/paracelsus-calendar/
-2. ~~Google Cloud API key~~ — done 16 Oct 2026 (key "paracelsus-calendar-web" in config.js, public by design; restrictions verified: other/empty referrers blocked). Was: enable Calendar API, create API key restricted to HTTP referrers `https://cal.paracelsus-recovery.com/*` and `https://andreolf.github.io/*`, API restriction = Calendar API only → paste into `config.js`, commit.
-3. Test with a real calendar: `https://andreolf.github.io/paracelsus-calendar/?c=<id>` before DNS.
-4. ~~DNS + custom domain + HTTPS~~ — done 17 Oct 2026. Live at https://cal.paracelsus-recovery.com/
-5. Send Jan/David the demo link (`?demo`) and the per-client link format.
+## Known risk (accepted 17 Oct 2026)
+Calendars are public and their IDs are initials, so schedules are guessable directly from Google. Fix if that changes: private calendars + an Apps Script web app under a clinic account + random link codes; `load()` in `index.html` is the only data-access code to change.
 
-## Nice-to-haves (not started)
-- Week view toggle; "add to phone calendar" (.ics) per event; German strings; PWA manifest so clients can add it to the home screen.
+## Open
+- iPad portrait: three days or full week? (asked, no answer)
+- Maria issues links for current clients; date to stop using the WordPress client pages.
+- Short-link previews in WhatsApp not verified (first response is HTTP 404).
+- Real-device check on iPhone/iPad (tested in emulation only).
+- Unused "API key 1" in the Google Cloud project.
+- Nice-to-haves: "add to phone calendar" (.ics) per event, German strings, PWA manifest.
